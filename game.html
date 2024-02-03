@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rock Paper Scissors</title>
+  <link rel="stylesheet" href="game.css">
+  </head>
+<body>
+
+  <h1>Rock Paper Scissors</h1>
+
+  <button class="game-button" onclick="playGame('rock');">✊</button>
+  <button class="game-button" onclick="playGame('paper');">✋</button>
+  <button class="game-button" onclick="playGame('scissors');">✌️</button>
+
+  <p class="js-result" style="color: white;"></p>
+  <p class="js-score" style="color: white;"></p>
+  <p class="js-moves" style="color: white;"></p>
+
+  <button class="reset-button" onclick="resetScore()">Reset Score</button>
+
+  <!-- <script src="game.js"></script>  -->
+  <script>
+    // Default score object, initialized from local storage if available
+    let score = JSON.parse(localStorage.getItem('score')) || {
+      Wins: 0,
+      Loses: 0,
+      Ties: 0
+    };
+
+    // Display the updated score on page load
+    updateScore();
+
+    // Function to handle a game round
+    function playGame(userMove) {
+      // Determine the computer's move randomly
+      const computerMove = pickComputerMove();
+
+      // Determine the winner of the round
+      let winner = '';
+      if (computerMove === userMove) {
+        winner = 'Tie';
+      } else if (
+        (computerMove === 'rock' && userMove === 'paper') ||
+        (computerMove === 'paper' && userMove === 'scissors') ||
+        (computerMove === 'scissors' && userMove === 'rock')
+      ) {
+        winner = 'You';
+        score.Wins++;
+      } else {
+        winner = 'Computer';
+        score.Loses++;
+      }
+
+      // Display the game result and moves
+      const result = winner === 'You' ? 'You win!' : winner === 'Computer' ? 'You lose.' : 'Tie.';
+      const moves = `Computer: ${computerMove}, You: ${userMove}`;
+      document.querySelector('.js-result').innerHTML = result;
+      document.querySelector('.js-moves').innerHTML = moves;
+
+      // Store the updated score in local storage
+      localStorage.setItem('score', JSON.stringify(score));
+
+      // Update the displayed score
+      updateScore();
+    }
+
+    // Function to reset the score and clear local storage
+    function resetScore() {
+      score = { Wins: 0, Loses: 0, Ties: 0 };
+      localStorage.removeItem('score');
+      updateScore();
+    }
+
+    // Function to update the displayed score
+    function updateScore() {
+      document.querySelector('.js-score').innerHTML = `Wins: ${score.Wins}, Loses: ${score.Loses}, Ties: ${score.Ties}`;
+    }
+
+    // Function to randomly generate the computer's move
+    function pickComputerMove() {
+      const randomNumber = Math.random();
+      if (randomNumber <= 0.33) {
+        return 'rock';
+      } else if (randomNumber <= 0.66) {
+        return 'paper';
+      } else {
+        return 'scissors';
+      }
+    }
+  </script>
+</body>
+</html>
